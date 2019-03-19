@@ -153,14 +153,20 @@ function getRandomColor() {
 }
 
 function addCubesToScene(scene) {
+    const loader = new THREE.TextureLoader();
     cubeProps.forEach(cubeProp => {
         const { position, color } = cubeProp;
         const [x, y, z] = position;
-        let geometry = new THREE.BoxGeometry(1, 1, 1);
-        let material = new THREE.MeshBasicMaterial({
-            color,
-        });
-        let cube = new THREE.Mesh(geometry, material);
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const materials = [
+            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
+            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
+            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
+            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
+            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
+            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
+        ];
+        let cube = new THREE.Mesh(geometry, materials);
         cube.position.set(x, y, z);
         scene.add(cube);
     });
@@ -178,11 +184,10 @@ function init() {
     camera.position.z = 20;
 
     controls = new THREE.TrackballControls(camera);
-    controls.rotateSpeed = 5.0;
-    controls.zoomSpeed = 2.0;
-    controls.panSpeed = 0.8;
+    controls.rotateSpeed = 3.0;
     controls.dynamicDampingFactor = 0.1;
     controls.noZoom = true;
+    controls.noPan = true;
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
