@@ -2,170 +2,31 @@ var camera, controls, scene, renderer;
 var parent;
 var mouse = new THREE.Vector2();
 
-const cubeProps = [
-    {
-        name: '1',
-        position: [-1, 1, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '2',
-        position: [0, 1, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '3',
-        position: [1, 1, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '4',
-        position: [-1, 0, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '5',
-        position: [0, 0, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '6',
-        position: [1, 0, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '7',
-        position: [-1, -1, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '8',
-        position: [0, -1, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '9',
-        position: [1, -1, 1],
-        color: getRandomColor(),
-    },
-    {
-        name: '10',
-        position: [-1, 1, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '11',
-        position: [0, 1, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '12',
-        position: [1, 1, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '13',
-        position: [-1, 0, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '14',
-        position: [0, 0, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '15',
-        position: [1, 0, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '16',
-        position: [-1, -1, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '17',
-        position: [0, -1, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '18',
-        position: [1, -1, 0],
-        color: getRandomColor(),
-    },
-    {
-        name: '19',
-        position: [-1, 1, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '20',
-        position: [0, 1, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '21',
-        position: [1, 1, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '22',
-        position: [-1, 0, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '23',
-        position: [0, 0, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '24',
-        position: [1, 0, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '25',
-        position: [-1, -1, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '26',
-        position: [0, -1, -1],
-        color: getRandomColor(),
-    },
-    {
-        name: '27',
-        position: [1, -1, -1],
-        color: getRandomColor(),
-    },
-];
-
 init();
 animate();
 
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
 function addCubesToScene(scene) {
     const loader = new THREE.TextureLoader();
-    cubeProps.forEach(cubeProp => {
-        const { position, color } = cubeProp;
+    cubeData.forEach(cubeProp => {
+        const { position, materialsList } = cubeProp;
         const [x, y, z] = position;
         const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const materials = [
-            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
-            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
-            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
-            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
-            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
-            new THREE.MeshBasicMaterial({ map: loader.load('img/sample.png') }),
-        ];
+        const materials = [];
+        materialsList.forEach(material => {
+            if (material) {
+                materials.push(
+                    new THREE.MeshBasicMaterial({
+                        map: loader.load(material),
+                    }),
+                );
+            } else {
+                materials.push(
+                    new THREE.MeshBasicMaterial({
+                        color: '#C8C8C8',
+                    }),
+                );
+            }
+        });
         let cube = new THREE.Mesh(geometry, materials);
         cube.position.set(x, y, z);
         scene.add(cube);
