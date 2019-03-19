@@ -33,8 +33,8 @@ function addCubesToScene(scene) {
         });
         let cube = new THREE.Mesh(geometry, materials);
         cube.position.set(x, y, z);
-        cube.callback = () => {
-            let answer = prompt(`Answer for cube ${id}`);
+        cube.callback = async () => {
+            let answer = await prompt(`Answer for cube ${id}`);
         };
         cubes.push(cube);
         scene.add(cube);
@@ -83,7 +83,7 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
     renderer.domElement.addEventListener('mousemove', onMouseMove, false);
-    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
     renderer.render(scene, camera);
 }
 
@@ -92,8 +92,7 @@ function onMouseMove(e) {
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 }
 
-function onMouseDown(event) {
-    event.preventDefault();
+function onMouseUp(e) {
     if (INTERSECTED) INTERSECTED.callback();
 }
 
