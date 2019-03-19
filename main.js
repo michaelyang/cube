@@ -30,6 +30,13 @@ function addCubesToScene(scene) {
         let cube = new THREE.Mesh(geometry, materials);
         cube.position.set(x, y, z);
         scene.add(cube);
+        var edges = new THREE.EdgesGeometry(geometry);
+        var line = new THREE.LineSegments(
+            edges,
+            new THREE.LineBasicMaterial({ color: 0xffffff }),
+        );
+        line.position.set(x, y, z);
+        scene.add(line);
     });
 }
 
