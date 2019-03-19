@@ -1,6 +1,6 @@
 var camera, controls, scene, renderer, projector, INTERSECTED;
 var cubes = [];
-var mouse = new THREE.Vector2();
+var mouse = new THREE.Vector2(-1000, -1000);
 
 init();
 animate();
@@ -91,7 +91,6 @@ function onMouseMove(e) {
 
 function animate() {
     requestAnimationFrame(animate);
-
     render();
     update();
 }
@@ -116,7 +115,6 @@ function update() {
     var intersects = ray.intersectObjects(cubes);
     if (intersects.length > 0) {
         if (intersects[0].object != INTERSECTED) {
-            console.log('inhere');
             if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
             INTERSECTED = intersects[0].object;
             INTERSECTED.currentMaterial = INTERSECTED.material;
