@@ -1,5 +1,5 @@
-var camera, controls, scene, renderer;
-var parent;
+var camera, controls, scene, renderer, projector, INTERSECTED;
+var cubes = [];
 var mouse = new THREE.Vector2();
 
 init();
@@ -20,6 +20,7 @@ function addCubesToScene(scene) {
                 materials.push(
                     new THREE.MeshBasicMaterial({
                         map: texture,
+                        transparent: true,
                     }),
                 );
             } else {
@@ -32,6 +33,7 @@ function addCubesToScene(scene) {
         });
         let cube = new THREE.Mesh(geometry, materials);
         cube.position.set(x, y, z);
+        cubes.push(cube);
         scene.add(cube);
         var edges = new THREE.EdgesGeometry(geometry);
         var line = new THREE.LineSegments(
@@ -62,6 +64,8 @@ function init() {
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
+    pickingScene = new THREE.Scene();
+    pickingTexture = new THREE.WebGLRenderTarget(1, 1);
     scene.add(new THREE.AmbientLight(0x555555));
     var light = new THREE.SpotLight(0xffffff, 1.5);
     light.position.set(0, 500, 2000);
@@ -75,18 +79,21 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener('mousemove', onMouseMove);
+    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
     renderer.render(scene, camera);
+    console.log(scene.children);
 }
 
 function onMouseMove(e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 }
 
 function animate() {
     requestAnimationFrame(animate);
+
     render();
+    update();
 }
 
 function onWindowResize() {
@@ -96,6 +103,30 @@ function onWindowResize() {
 }
 
 function render() {
-    controls.update();
     renderer.render(scene, camera);
+}
+
+function update() {
+    var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
+    vector.unproject(camera);
+    var ray = new THREE.Raycaster(
+        camera.position,
+        vector.sub(camera.position).normalize(),
+    );
+    var intersects = ray.intersectObjects(cubes);
+    if (intersects.length > 0) {
+        if (intersects[0].object != INTERSECTED) {
+            console.log('inhere');
+            if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
+            INTERSECTED = intersects[0].object;
+            INTERSECTED.currentMaterial = INTERSECTED.material;
+            INTERSECTED.material = new THREE.MeshBasicMaterial({
+                color: '#DCDCDC',
+            });
+        }
+    } else {
+        if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
+        INTERSECTED = null;
+    }
+    controls.update();
 }
