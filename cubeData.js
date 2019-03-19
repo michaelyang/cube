@@ -6,10 +6,22 @@ const cubeData = [
         position: [-1, 1, 1],
         materialsList: [
             null,
-            'img/1-b.png',
-            'img/1-u.png',
+            {
+                image:
+                    'https://raw.githubusercontent.com/michaelyang/cube/master/img/1-b.png',
+                rotation: 180,
+            },
+            {
+                image:
+                    'https://raw.githubusercontent.com/michaelyang/cube/master/img/1-u.png',
+                rotation: -90,
+            },
             null,
-            'img/1-l.png',
+            {
+                image:
+                    'https://raw.githubusercontent.com/michaelyang/cube/master/img/1-l.png',
+                rotation: 180,
+            },
             null,
         ],
     },

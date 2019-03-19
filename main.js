@@ -14,9 +14,12 @@ function addCubesToScene(scene) {
         const materials = [];
         materialsList.forEach(material => {
             if (material) {
+                const texture = loader.load(material.image);
+                texture.center.set(0.5, 0.5);
+                texture.rotation = THREE.Math.degToRad(material.rotation);
                 materials.push(
                     new THREE.MeshBasicMaterial({
-                        map: loader.load(material),
+                        map: texture,
                     }),
                 );
             } else {
