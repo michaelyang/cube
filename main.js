@@ -8,7 +8,7 @@ animate();
 function addCubesToScene(scene) {
     const loader = new THREE.TextureLoader();
     cubeData.forEach(cubeProp => {
-        const { position, materialsList } = cubeProp;
+        const { position, id, materialsList } = cubeProp;
         const [x, y, z] = position;
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const materials = [];
@@ -33,6 +33,9 @@ function addCubesToScene(scene) {
         });
         let cube = new THREE.Mesh(geometry, materials);
         cube.position.set(x, y, z);
+        cube.callback = () => {
+            let answer = prompt(`Answer for cube ${id}`);
+        };
         cubes.push(cube);
         scene.add(cube);
         var edges = new THREE.EdgesGeometry(geometry);
@@ -80,13 +83,18 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
     renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
     renderer.render(scene, camera);
-    console.log(scene.children);
 }
 
 function onMouseMove(e) {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+}
+
+function onMouseDown(event) {
+    event.preventDefault();
+    if (INTERSECTED) INTERSECTED.callback();
 }
 
 function animate() {
