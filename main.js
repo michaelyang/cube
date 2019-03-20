@@ -1,7 +1,6 @@
-var camera, controls, scene, renderer, projector, INTERSECTED;
+var camera, controls, scene, renderer, projector, INTERSECTED, LASTCLICKED;
 var cubes = [];
 var mouse = new THREE.Vector2(-1000, -1000);
-
 init();
 animate();
 
@@ -20,14 +19,14 @@ function addCubesToScene(scene) {
                 materials.push(
                     new THREE.MeshBasicMaterial({
                         map: texture,
-                        transparent: true,
-                    }),
+                        transparent: true
+                    })
                 );
             } else {
                 materials.push(
                     new THREE.MeshBasicMaterial({
-                        color: '#C8C8C8',
-                    }),
+                        color: "#C8C8C8"
+                    })
                 );
             }
         });
@@ -41,7 +40,7 @@ function addCubesToScene(scene) {
         var edges = new THREE.EdgesGeometry(geometry);
         var line = new THREE.LineSegments(
             edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff }),
+            new THREE.LineBasicMaterial({ color: 0xffffff })
         );
         line.position.set(x, y, z);
         scene.add(line);
@@ -53,7 +52,7 @@ function init() {
         15,
         window.innerWidth / window.innerHeight,
         10,
-        100,
+        100
     );
     camera.position.x = 20;
     camera.position.y = 20;
@@ -76,14 +75,15 @@ function init() {
 
     addCubesToScene(scene);
 
-    window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener("resize", onWindowResize, false);
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
-    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
+    renderer.domElement.addEventListener("mousedown", onMouseDown, false);
+    renderer.domElement.addEventListener("mouseup", onMouseUp, false);
     renderer.render(scene, camera);
 }
 
@@ -92,8 +92,18 @@ function onMouseMove(e) {
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 }
 
+function onMouseDown(e) {
+    LASTCLICKED = Object.assign({}, mouse);
+}
+
 function onMouseUp(e) {
-    if (INTERSECTED) INTERSECTED.callback();
+    //Might have to change later to an interval of mouse click rather than exact
+    if (
+        !LASTCLICKED ||
+        (LASTCLICKED.x === mouse.x && LASTCLICKED.y === mouse.y && INTERSECTED)
+    )
+        INTERSECTED.callback();
+    LASTCLICKED = null;
 }
 
 function animate() {
@@ -117,16 +127,20 @@ function update() {
     vector.unproject(camera);
     var ray = new THREE.Raycaster(
         camera.position,
-        vector.sub(camera.position).normalize(),
+        vector.sub(camera.position).normalize()
     );
     var intersects = ray.intersectObjects(cubes);
-    if (intersects.length > 0) {
+    if (
+        (!LASTCLICKED ||
+            (LASTCLICKED.x === mouse.x && LASTCLICKED.y === mouse.y)) &&
+        intersects.length > 0
+    ) {
         if (intersects[0].object != INTERSECTED) {
             if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
             INTERSECTED = intersects[0].object;
             INTERSECTED.currentMaterial = INTERSECTED.material;
             INTERSECTED.material = new THREE.MeshBasicMaterial({
-                color: '#DCDCDC',
+                color: "#DCDCDC"
             });
         }
     } else {
