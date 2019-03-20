@@ -49,20 +49,14 @@ function addCubesToScene(scene) {
 
 function init() {
     camera = new THREE.PerspectiveCamera(
-        15,
+        45,
         window.innerWidth / window.innerHeight,
-        10,
+        0.1,
         100
     );
     camera.position.x = 20;
     camera.position.y = 20;
     camera.position.z = 20;
-
-    controls = new THREE.TrackballControls(camera);
-    controls.rotateSpeed = 3.0;
-    controls.dynamicDampingFactor = 0.1;
-    controls.noZoom = true;
-    controls.noPan = true;
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
@@ -84,6 +78,15 @@ function init() {
     renderer.domElement.addEventListener("mousemove", onMouseMove, false);
     renderer.domElement.addEventListener("mousedown", onMouseDown, false);
     renderer.domElement.addEventListener("mouseup", onMouseUp, false);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.minDistance = 7;
+    controls.maxDistance = 20;
+    controls.enablePan = false;
+    controls.rotateSpeed = 0.1;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
     renderer.render(scene, camera);
 }
 
