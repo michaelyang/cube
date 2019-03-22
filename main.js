@@ -40,16 +40,17 @@ function addCubesToScene(scene) {
         var edges = new THREE.EdgesGeometry(geometry);
         var line = new THREE.LineSegments(
             edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff })
+            new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 100 })
         );
         line.position.set(x, y, z);
+        line.renderOrder = 1;
         scene.add(line);
     });
 }
 
 function init() {
     camera = new THREE.PerspectiveCamera(
-        45,
+        30,
         window.innerWidth / window.innerHeight,
         0.1,
         100
@@ -80,13 +81,12 @@ function init() {
     renderer.domElement.addEventListener("mouseup", onMouseUp, false);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.minDistance = 7;
+    controls.minDistance = 10;
     controls.maxDistance = 20;
     controls.enablePan = false;
     controls.rotateSpeed = 0.1;
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-
     renderer.render(scene, camera);
 }
 
