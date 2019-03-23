@@ -29,18 +29,18 @@ const cubeData = [
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/1-b_selected.png",
-                rotation: 180
+                rotation: 0
             },
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/1-u_selected.png",
-                rotation: -90
+                rotation: 0
             },
             null,
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/1-l_selected.png",
-                rotation: 180
+                rotation: 0
             },
             null
         ]
@@ -59,19 +59,19 @@ const cubeData = [
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-b.png",
-                rotation: 180
+                rotation: 0
             },
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-u.png",
-                rotation: -90
+                rotation: 90
             },
             null,
             null,
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-r.png",
-                rotation: 180
+                rotation: 0
             }
         ],
         selectedMaterialsList: [
@@ -79,19 +79,19 @@ const cubeData = [
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-b_selected.png",
-                rotation: 180
+                rotation: 0
             },
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-u_selected.png",
-                rotation: -90
+                rotation: 90
             },
             null,
             null,
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-r_selected.png",
-                rotation: 180
+                rotation: 0
             }
         ]
     },
