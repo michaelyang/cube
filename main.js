@@ -1,36 +1,45 @@
 var camera, controls, scene, renderer, projector, INTERSECTED, LASTCLICKED;
 var cubes = [];
+var outlines = [];
 var mouse = new THREE.Vector2(-1000, -1000);
 init();
 animate();
 
-function addCubesToScene(scene) {
+function materialsListToMaterials(materialsList) {
+    const materials = [];
     const loader = new THREE.TextureLoader();
+    materialsList.forEach(material => {
+        if (material) {
+            const texture = loader.load(material.image);
+            texture.center.set(0.5, 0.5);
+            texture.rotation = THREE.Math.degToRad(material.rotation);
+            materials.push(
+                new THREE.MeshBasicMaterial({
+                    map: texture,
+                    transparent: true
+                })
+            );
+        } else {
+            materials.push(
+                new THREE.MeshBasicMaterial({
+                    color: "#C8C8C8"
+                })
+            );
+        }
+    });
+    return materials;
+}
+
+function addCubesToScene(scene) {
     cubeData.forEach(cubeProp => {
-        const { position, id, materialsList } = cubeProp;
+        const { position, id, materialsList, selectedMaterialsList } = cubeProp;
         const [x, y, z] = position;
         const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const materials = [];
-        materialsList.forEach(material => {
-            if (material) {
-                const texture = loader.load(material.image);
-                texture.center.set(0.5, 0.5);
-                texture.rotation = THREE.Math.degToRad(material.rotation);
-                materials.push(
-                    new THREE.MeshBasicMaterial({
-                        map: texture,
-                        transparent: true
-                    })
-                );
-            } else {
-                materials.push(
-                    new THREE.MeshBasicMaterial({
-                        color: "#C8C8C8"
-                    })
-                );
-            }
-        });
-        let cube = new THREE.Mesh(geometry, materials);
+        unselectedMaterials = materialsListToMaterials(materialsList);
+        selectedMaterials = materialsListToMaterials(selectedMaterialsList);
+        let cube = new THREE.Mesh(geometry, unselectedMaterials);
+        cube.unselectedMaterials = unselectedMaterials;
+        cube.selectedMaterials = selectedMaterials;
         cube.position.set(x, y, z);
         cube.callback = async () => {
             let answer = await prompt(`Answer for cube ${id}`);
@@ -40,15 +49,15 @@ function addCubesToScene(scene) {
         var edges = new THREE.EdgesGeometry(geometry);
         var line = new THREE.LineSegments(
             edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 100 })
+            new THREE.LineBasicMaterial({ color: 0xffffff })
         );
         line.position.set(x, y, z);
-        line.renderOrder = 1;
         scene.add(line);
     });
 }
 
 function init() {
+    //Camera
     camera = new THREE.PerspectiveCamera(
         30,
         window.innerWidth / window.innerHeight,
@@ -59,19 +68,12 @@ function init() {
     camera.position.y = 20;
     camera.position.z = 20;
 
+    //Scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
-    pickingScene = new THREE.Scene();
-    pickingTexture = new THREE.WebGLRenderTarget(1, 1);
-    scene.add(new THREE.AmbientLight(0x555555));
-    var light = new THREE.SpotLight(0xffffff, 1.5);
-    light.position.set(0, 500, 2000);
-    scene.add(light);
-
     addCubesToScene(scene);
 
-    window.addEventListener("resize", onWindowResize, false);
-
+    //renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,7 +81,9 @@ function init() {
     renderer.domElement.addEventListener("mousemove", onMouseMove, false);
     renderer.domElement.addEventListener("mousedown", onMouseDown, false);
     renderer.domElement.addEventListener("mouseup", onMouseUp, false);
+    window.addEventListener("resize", onWindowResize, false);
 
+    //Controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.minDistance = 10;
     controls.maxDistance = 20;
@@ -87,6 +91,7 @@ function init() {
     controls.rotateSpeed = 0.1;
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+
     renderer.render(scene, camera);
 }
 
@@ -142,9 +147,7 @@ function update() {
             if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
             INTERSECTED = intersects[0].object;
             INTERSECTED.currentMaterial = INTERSECTED.material;
-            INTERSECTED.material = new THREE.MeshBasicMaterial({
-                color: "#DCDCDC"
-            });
+            INTERSECTED.material = INTERSECTED.selectedMaterials;
         }
     } else {
         if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
