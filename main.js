@@ -6,7 +6,7 @@ var mouse = new THREE.Vector2(-1000, -1000);
 init();
 animate();
 
-function materialsListToMaterials(materialsList) {
+function materialsListToMaterials(materialsList, type) {
     const materials = [];
     const loader = new THREE.TextureLoader();
     materialsList.forEach(material => {
@@ -24,9 +24,10 @@ function materialsListToMaterials(materialsList) {
                 })
             );
         } else {
+            color = type == "unselected" ? "#c8c8c8" : "#d5d5d5";
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    color: "#C8C8C8",
+                    color,
                     polygonOffset: true,
                     polygonOffsetFactor: 1,
                     polygonOffsetUnits: 1
@@ -42,8 +43,14 @@ function addCubesToScene(scene) {
         const { position, id, materialsList, selectedMaterialsList } = cubeProp;
         const [x, y, z] = position;
         const geometry = new THREE.BoxGeometry(1, 1, 1);
-        unselectedMaterials = materialsListToMaterials(materialsList);
-        selectedMaterials = materialsListToMaterials(selectedMaterialsList);
+        unselectedMaterials = materialsListToMaterials(
+            materialsList,
+            "unselected"
+        );
+        selectedMaterials = materialsListToMaterials(
+            selectedMaterialsList,
+            "selected"
+        );
         let cube = new THREE.Mesh(geometry, unselectedMaterials);
         cube.unselectedMaterials = unselectedMaterials;
         cube.selectedMaterials = selectedMaterials;
