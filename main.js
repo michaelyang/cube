@@ -1,6 +1,7 @@
 var camera, controls, scene, renderer, projector, INTERSECTED, LASTCLICKED;
-var cubes = [];
-var outlines = [];
+var cubes = {};
+var outlines = {};
+var cubesArray = [];
 var mouse = new THREE.Vector2(-1000, -1000);
 init();
 animate();
@@ -16,13 +17,19 @@ function materialsListToMaterials(materialsList) {
             materials.push(
                 new THREE.MeshBasicMaterial({
                     map: texture,
-                    transparent: true
+                    transparent: true,
+                    polygonOffset: true,
+                    polygonOffsetFactor: 1,
+                    polygonOffsetUnits: 1
                 })
             );
         } else {
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    color: "#C8C8C8"
+                    color: "#C8C8C8",
+                    polygonOffset: true,
+                    polygonOffsetFactor: 1,
+                    polygonOffsetUnits: 1
                 })
             );
         }
@@ -43,17 +50,20 @@ function addCubesToScene(scene) {
         cube.position.set(x, y, z);
         cube.callback = async () => {
             let answer = await prompt(`Answer for cube ${id}`);
+            remove(id);
         };
-        cubes.push(cube);
+        cubes[id] = cube;
         scene.add(cube);
         var edges = new THREE.EdgesGeometry(geometry);
-        var line = new THREE.LineSegments(
+        var outline = new THREE.LineSegments(
             edges,
             new THREE.LineBasicMaterial({ color: 0xffffff })
         );
-        line.position.set(x, y, z);
-        scene.add(line);
+        outline.position.set(x, y, z);
+        outlines[id] = outline;
+        scene.add(outline);
     });
+    cubesArray = Object.values(cubes);
 }
 
 function init() {
@@ -137,7 +147,7 @@ function update() {
         camera.position,
         vector.sub(camera.position).normalize()
     );
-    var intersects = ray.intersectObjects(cubes);
+    var intersects = ray.intersectObjects(cubesArray);
     if (
         (!LASTCLICKED ||
             (LASTCLICKED.x === mouse.x && LASTCLICKED.y === mouse.y)) &&
@@ -154,4 +164,12 @@ function update() {
         INTERSECTED = null;
     }
     controls.update();
+}
+
+function remove(id) {
+    mesh = cubes[id];
+    scene.remove(mesh);
+    outline = outlines[id];
+    scene.remove(outline);
+    cubesArray = Object.values(cubes);
 }
