@@ -224,8 +224,46 @@ const cubeData = [
     {
         id: "25",
         position: [1, -1, 1],
-        materialsList: emptyMaterialsList,
-        selectedMaterialsList: emptyMaterialsList
+        materialsList: [
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-f.png",
+                rotation: 0
+            },
+            null,
+            null,
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-d.png",
+                rotation: 90
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-l.png",
+                rotation: 0
+            },
+            null
+        ],
+        selectedMaterialsList: [
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-f_selected.png",
+                rotation: 0
+            },
+            null,
+            null,
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-d_selected.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-l_selected.png",
+                rotation: 0
+            },
+            null
+        ]
     },
     {
         id: "26",
