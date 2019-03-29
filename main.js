@@ -6,6 +6,27 @@ var mouse = new THREE.Vector2(-1000, -1000);
 init();
 animate();
 
+let targetURL = process.env.ANSWER_LAMBDA_ENDPOINT;
+let headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Origin': '*',
+};
+
+function handleClick(cubeID) {
+    let answer = prompt(`Answer for cube ${cubeID}?`);
+    fetch(url, {
+        method: 'GET',
+        headers: headers,
+        body: JSON.stringify({ answer }),
+    })
+        .then(function(response) {
+            console.log(response.json());
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+}
+
 function materialsListToMaterials(materialsList, type) {
     const materials = [];
     const loader = new THREE.TextureLoader();
@@ -20,18 +41,18 @@ function materialsListToMaterials(materialsList, type) {
                     transparent: true,
                     polygonOffset: true,
                     polygonOffsetFactor: 1,
-                    polygonOffsetUnits: 1
-                })
+                    polygonOffsetUnits: 1,
+                }),
             );
         } else {
-            color = type == "unselected" ? "#c8c8c8" : "#d5d5d5";
+            color = type == 'unselected' ? '#c8c8c8' : '#d5d5d5';
             materials.push(
                 new THREE.MeshBasicMaterial({
                     color,
                     polygonOffset: true,
                     polygonOffsetFactor: 1,
-                    polygonOffsetUnits: 1
-                })
+                    polygonOffsetUnits: 1,
+                }),
             );
         }
     });
@@ -45,26 +66,25 @@ function addCubesToScene(scene) {
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         unselectedMaterials = materialsListToMaterials(
             materialsList,
-            "unselected"
+            'unselected',
         );
         selectedMaterials = materialsListToMaterials(
             selectedMaterialsList,
-            "selected"
+            'selected',
         );
         let cube = new THREE.Mesh(geometry, unselectedMaterials);
         cube.unselectedMaterials = unselectedMaterials;
         cube.selectedMaterials = selectedMaterials;
         cube.position.set(x, y, z);
-        cube.callback = async () => {
-            let answer = await prompt(`Answer for cube ${id}`);
-            remove(id);
+        cube.callback = () => {
+            handleClick(id);
         };
         cubes[id] = cube;
         scene.add(cube);
         var edges = new THREE.EdgesGeometry(geometry);
         var outline = new THREE.LineSegments(
             edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff })
+            new THREE.LineBasicMaterial({ color: 0xffffff }),
         );
         outline.position.set(x, y, z);
         outlines[id] = outline;
@@ -79,7 +99,7 @@ function init() {
         30,
         window.innerWidth / window.innerHeight,
         0.1,
-        100
+        100,
     );
     camera.position.x = 20;
     camera.position.y = 20;
@@ -95,10 +115,10 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
-    renderer.domElement.addEventListener("mousedown", onMouseDown, false);
-    renderer.domElement.addEventListener("mouseup", onMouseUp, false);
-    window.addEventListener("resize", onWindowResize, false);
+    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+    window.addEventListener('resize', onWindowResize, false);
 
     //Controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -152,7 +172,7 @@ function update() {
     vector.unproject(camera);
     var ray = new THREE.Raycaster(
         camera.position,
-        vector.sub(camera.position).normalize()
+        vector.sub(camera.position).normalize(),
     );
     var intersects = ray.intersectObjects(cubesArray);
     if (
