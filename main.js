@@ -6,7 +6,7 @@ var mouse = new THREE.Vector2(-1000, -1000);
 init();
 animate();
 
-let targetURL = LAMBDA_ENDPOINT;
+let targetURL = process.env.LAMBDA_ENDPOINT;
 let headers = {
     'Content-Type': 'application/json',
     'Access-Control-Origin': '*',
