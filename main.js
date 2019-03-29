@@ -10,7 +10,6 @@ let targetURL =
     'https://gallant-joliot-2f63cf.netlify.com/.netlify/functions/answer';
 let headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Origin': '*',
 };
 
 async function handleClick(cubeID) {
