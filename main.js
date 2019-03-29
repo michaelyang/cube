@@ -15,15 +15,14 @@ let headers = {
 
 async function handleClick(cubeID) {
     let answer = prompt(`Answer for cube ${cubeID}?`);
-    console.log({ answer });
     try {
-        response = await fetch(targetURL, {
+        let response = await fetch(targetURL, {
             method: 'POST',
             headers: headers,
             body: JSON.stringify({ answer }),
         });
-        let json = await response.json();
-        if (json.status === '200') {
+        let data = await response.json();
+        if (data.status === '200') {
             remove(cubeID);
         }
     } catch (e) {
