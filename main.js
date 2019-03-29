@@ -111,8 +111,7 @@ function init() {
     addCubesToScene(scene);
 
     //renderer
-    var canvas = document.getElementById('appCanvas');
-    renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
