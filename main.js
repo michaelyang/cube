@@ -23,7 +23,9 @@ async function handleClick(cubeID) {
             body: JSON.stringify({ answer }),
         });
         let json = await response.json();
-        console.log(json);
+        if (json.status === '200') {
+            remove(cubeID);
+        }
     } catch (e) {
         console.log('Error', e);
     }
