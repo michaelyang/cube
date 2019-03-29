@@ -13,7 +13,7 @@ let headers = {
     'Access-Control-Origin': '*',
 };
 
-handleClick(cubeID) = () => {
+function handleClick(cubeID) {
     let answer = prompt(`Answer for cube ${cubeID}?`);
     console.log({ answer });
     fetch(targetURL, {
@@ -78,7 +78,7 @@ function addCubesToScene(scene) {
         cube.unselectedMaterials = unselectedMaterials;
         cube.selectedMaterials = selectedMaterials;
         cube.position.set(x, y, z);
-        cube.callback = handleClick(id);
+        cube.callback = () => handleClick(id);
         cubes[id] = cube;
         scene.add(cube);
         var edges = new THREE.EdgesGeometry(geometry);
