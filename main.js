@@ -119,6 +119,9 @@ function init() {
     renderer.domElement.addEventListener('mousemove', onMouseMove, false);
     renderer.domElement.addEventListener('mousedown', onMouseDown, false);
     renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+    renderer.domElement.addEventListener('touchstart', onTouchStart, false);
+    renderer.domElement.addEventListener('touchend', onTouchEnd, false);
+    renderer.domElement.addEventListener('touchmove', onTouchMove, false);
     window.addEventListener('resize', onWindowResize, false);
 
     //Controls
@@ -154,6 +157,18 @@ function onMouseUp(e) {
     LASTCLICKED = null;
 }
 
+function onTouchStart(e) {
+    //todo
+    e.preventDefault();
+}
+function onTouchMove(e) {
+    //todo
+    e.preventDefault();
+}
+function onTouchEnd(e) {
+    //todo
+    e.preventDefault();
+}
 function animate() {
     requestAnimationFrame(animate);
     render();
