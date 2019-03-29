@@ -13,20 +13,20 @@ let headers = {
     'Access-Control-Origin': '*',
 };
 
-function handleClick(cubeID) {
+async function handleClick(cubeID) {
     let answer = prompt(`Answer for cube ${cubeID}?`);
     console.log({ answer });
-    fetch(targetURL, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ answer }),
-    })
-        .then(function(response) {
-            console.log(response.json());
-        })
-        .catch(function(error) {
-            console.log(error);
+    try {
+        response = await fetch(targetURL, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ answer }),
         });
+        let json = await response.json();
+        console.log(json);
+    } catch (e) {
+        console.log('Error', e);
+    }
 }
 
 function materialsListToMaterials(materialsList, type) {
