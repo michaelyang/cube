@@ -1,0 +1,26 @@
+{
+  "name": "cube",
+  "version": "1.0.0",
+  "description": "cube",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yangmike92/cube.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yangmike92/cube/issues"
+  },
+  "homepage": "https://github.com/yangmike92/cube#readme",
+  "dependencies": {
+    "netlify-lambda": "^1.4.3"
+  }
+}
