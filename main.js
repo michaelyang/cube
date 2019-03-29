@@ -1,3 +1,4 @@
+require('dotenv').config();
 var camera, controls, scene, renderer, projector, INTERSECTED, LASTCLICKED;
 var cubes = {};
 var outlines = {};
