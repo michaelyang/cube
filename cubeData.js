@@ -152,8 +152,62 @@ const cubeData = [
     {
         id: "13",
         position: [0, 0, 1],
-        materialsList: emptyMaterialsList,
-        selectedMaterialsList: emptyMaterialsList
+        materialsList: [
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-f.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-b.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-u.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-d.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-l.png",
+                rotation: 0
+            },
+            null
+        ],
+        selectedMaterialsList: [
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-f_selected.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-b_selected.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-u_selected.png",
+                rotation: 0
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-d_selected.png",
+                rotation: 90
+            },
+            {
+                image:
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/13-l_selected.png",
+                rotation: 0
+            },
+            null
+        ]
     },
     {
         id: "14",
