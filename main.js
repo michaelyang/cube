@@ -140,10 +140,12 @@ function onMouseMove(e) {
 }
 
 function onMouseDown(e) {
+    e.preventDefault();
     LASTCLICKED = Object.assign({}, mouse);
 }
 
 function onMouseUp(e) {
+    e.preventDefault();
     //Might have to change later to an interval of mouse click rather than exact
     if (
         !LASTCLICKED ||
