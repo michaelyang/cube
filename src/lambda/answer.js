@@ -10,6 +10,6 @@ exports.handler = async function(event, context, callback) {
             body: `${hashedAnswer}`,
         });
     } else {
-        callback('Oh no! An error.');
+        callback(`Oh no! An error. ${hashedAnswer}  ${ANSWER_CUBE_1}`);
     }
 };
