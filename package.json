@@ -24,7 +24,6 @@
     "homepage": "https://github.com/michaelyang/cube#readme",
     "dependencies": {
         "bcryptjs": "^2.4.3",
-        "dotenv": "^7.0.0",
         "netlify-lambda": "^1.4.3"
     }
 }

@@ -1,4 +1,3 @@
-require('dotenv').config();
 var camera, controls, scene, renderer, projector, INTERSECTED, LASTCLICKED;
 var cubes = {};
 var outlines = {};
@@ -7,7 +6,8 @@ var mouse = new THREE.Vector2(-1000, -1000);
 init();
 animate();
 
-let targetURL = process.env.LAMBDA_ENDPOINT;
+let targetURL =
+    'https://gallant-joliot-2f63cf.netlify.com/.netlify/functions/answer';
 let headers = {
     'Content-Type': 'application/json',
     'Access-Control-Origin': '*',
