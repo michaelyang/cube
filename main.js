@@ -16,7 +16,7 @@ let headers = {
 function handleClick(cubeID) {
     let answer = prompt(`Answer for cube ${cubeID}?`);
     fetch(targetURL, {
-        method: 'GET',
+        method: 'POST',
         headers: headers,
         body: JSON.stringify({ answer }),
     })
