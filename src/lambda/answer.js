@@ -13,7 +13,7 @@ exports.handler = async function(event, context, callback) {
         output = getJsonOutput('400', 'Incorrect', '');
     }
     callback(null, {
-        statusCode: '200',
+        statusCode: 200,
         headers: headers,
         body: JSON.stringify(output),
     });
