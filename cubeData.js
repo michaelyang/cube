@@ -289,7 +289,7 @@ const cubeData = [
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/25-d.png",
-                rotation: 90
+                rotation: 0
             },
             {
                 image:
