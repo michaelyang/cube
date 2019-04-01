@@ -1,4 +1,4 @@
-var camera,
+let camera,
     controls,
     scene,
     renderer,
@@ -6,34 +6,40 @@ var camera,
     INTERSECTED,
     LASTCLICKEDLOCATION,
     DRAGGED;
-var cubes = {};
-var outlines = {};
-var cubesArray = [];
-var mouse = new THREE.Vector2(-1000, -1000);
+let cubes = {};
+let cubeAnswers = {};
+let outlines = {};
+let cubesArray = [];
+let mouse = new THREE.Vector2(-1000, -1000);
+let bcrypt = dcodeIO.bcrypt;
+
 init();
 animate();
 
-let targetURL =
-    'https://gallant-joliot-2f63cf.netlify.com/.netlify/functions/answer';
-let headers = {
-    'Content-Type': 'application/json',
-};
+//let targetURL =
+//    'https://gallant-joliot-2f63cf.netlify.com/.netlify/functions/answer';
+//let headers = {
+//    'Content-Type': 'application/json',
+//};
 
 async function handleClick(cubeID) {
     let answer = prompt(`Answer for cube ${cubeID}?`);
-    try {
-        let response = await fetch(targetURL, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({ answer }),
-        });
-        let data = await response.json();
-        if (data.status === '200') {
-            remove(cubeID);
-        }
-    } catch (e) {
-        console.log('Error', e);
+    if (await bcrypt.compare(answer, cubeAnswers[cubeID])) {
+        remove(cubeID);
     }
+    //try {
+    //    let response = await fetch(targetURL, {
+    //        method: 'POST',
+    //        headers: headers,
+    //        body: JSON.stringify({ answer }),
+    //    });
+    //    let data = await response.json();
+    //    if (data.status === '200') {
+    //        remove(cubeID);
+    //    }
+    //} catch (e) {
+    //    console.log('Error', e);
+    //}
 }
 
 function materialsListToMaterials(materialsList, type) {
@@ -70,7 +76,13 @@ function materialsListToMaterials(materialsList, type) {
 
 function addCubesToScene(scene) {
     cubeData.forEach(cubeProp => {
-        const { position, id, materialsList, selectedMaterialsList } = cubeProp;
+        const {
+            position,
+            id,
+            materialsList,
+            selectedMaterialsList,
+            answer,
+        } = cubeProp;
         const [x, y, z] = position;
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         unselectedMaterials = materialsListToMaterials(
@@ -87,6 +99,7 @@ function addCubesToScene(scene) {
         cube.position.set(x, y, z);
         cube.callback = () => handleClick(id);
         cubes[id] = cube;
+        cubeAnswers[id] = answer;
         scene.add(cube);
         var edges = new THREE.EdgesGeometry(geometry);
         var outline = new THREE.LineSegments(
