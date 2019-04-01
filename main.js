@@ -1,4 +1,4 @@
-var camera, controls, scene, renderer, projector, INTERSECTED, LASTCLICKED;
+var camera, controls, scene, renderer, projector, INTERSECTED, CLICKED, DRAGGED;
 var cubes = {};
 var outlines = {};
 var cubesArray = [];
@@ -138,37 +138,43 @@ function init() {
 function onMouseMove(e) {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    if (CLICKED) {
+        DRAGGED = true;
+    }
 }
 
 function onMouseDown(e) {
     e.preventDefault();
-    LASTCLICKED = Object.assign({}, mouse);
+    CLICKED = true;
+    DRAGGED = false;
 }
 
 function onMouseUp(e) {
     e.preventDefault();
-    //Might have to change later to an interval of mouse click rather than exact
-    if (
-        !LASTCLICKED ||
-        (LASTCLICKED.x === mouse.x && LASTCLICKED.y === mouse.y && INTERSECTED)
-    )
-        INTERSECTED.callback();
-    LASTCLICKED = null;
+    if (!DRAGGED && INTERSECTED) INTERSECTED.callback();
+    CLICKED = false;
+    DRAGGED = false;
 }
 
 function onTouchMove(e) {
     mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+    if (CLICKED) {
+        DRAGGED = true;
+    }
 }
 
 function onTouchStart(e) {
-    e.preventDefault();
-    onMouseDown(e);
+    e.preventDefault;
+    CLICKED = true;
+    DRAGGED = false;
 }
 
 function onTouchEnd(e) {
     e.preventDefault();
-    onMouseUp(e);
+    if (!DRAGGED && INTERSECTED) INTERSECTED.callback();
+    CLICKED = false;
+    DRAGGED = false;
 }
 
 function animate() {
@@ -195,11 +201,7 @@ function update() {
         vector.sub(camera.position).normalize(),
     );
     var intersects = ray.intersectObjects(cubesArray);
-    if (
-        (!LASTCLICKED ||
-            (LASTCLICKED.x === mouse.x && LASTCLICKED.y === mouse.y)) &&
-        intersects.length > 0
-    ) {
+    if (!DRAGGED && intersects.length > 0) {
         if (intersects[0].object != INTERSECTED) {
             if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
             INTERSECTED = intersects[0].object;
