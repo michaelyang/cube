@@ -1,4 +1,11 @@
-var camera, controls, scene, renderer, projector, INTERSECTED, CLICKED, DRAGGED;
+var camera,
+    controls,
+    scene,
+    renderer,
+    projector,
+    INTERSECTED,
+    LASTCLICKEDLOCATION,
+    DRAGGED;
 var cubes = {};
 var outlines = {};
 var cubesArray = [];
@@ -138,28 +145,36 @@ function init() {
 function onMouseMove(e) {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-    if (CLICKED) {
+    if (
+        LASTCLICKEDLOCATION &&
+        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.05 &&
+            Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.05)
+    ) {
         DRAGGED = true;
     }
 }
 
 function onMouseDown(e) {
     e.preventDefault();
-    CLICKED = true;
+    LASTCLICKEDLOCATION = Object.assign({}, mouse);
     DRAGGED = false;
 }
 
 function onMouseUp(e) {
     e.preventDefault();
     if (!DRAGGED && INTERSECTED) INTERSECTED.callback();
-    CLICKED = false;
+    LASTCLICKEDLOCATION = false;
     DRAGGED = false;
 }
 
 function onTouchMove(e) {
     mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-    if (CLICKED) {
+    if (
+        LASTCLICKEDLOCATION &&
+        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.05 &&
+            Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.05)
+    ) {
         DRAGGED = true;
     }
 }
@@ -170,7 +185,7 @@ function onTouchStart(e) {
         case 1:
             mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-            CLICKED = true;
+            LASTCLICKEDLOCATION = Object.assign({}, mouse);
             DRAGGED = false;
             break;
         case 2:
@@ -189,7 +204,7 @@ function onTouchEnd(e) {
     e.preventDefault();
     if (!DRAGGED && INTERSECTED) INTERSECTED.callback();
     if (DRAGGED) mouse = new THREE.Vector2(-1000, -1000);
-    CLICKED = false;
+    LASTCLICKEDLOCATION = false;
     DRAGGED = false;
 }
 
