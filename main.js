@@ -188,7 +188,7 @@ function onTouchStart(e) {
 function onTouchEnd(e) {
     e.preventDefault();
     if (!DRAGGED && INTERSECTED) INTERSECTED.callback();
-    if (DRAGGED) mouse = THREE.Vector2(-1000, -1000);
+    if (DRAGGED) mouse = new THREE.Vector2(-1000, -1000);
     CLICKED = false;
     DRAGGED = false;
 }
