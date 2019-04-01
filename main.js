@@ -121,6 +121,7 @@ function init() {
     renderer.domElement.addEventListener('touchstart', onTouchStart, false);
     renderer.domElement.addEventListener('touchend', onTouchEnd, false);
     renderer.domElement.addEventListener('touchmove', onTouchMove, false);
+    renderer.domElement.addEventListener('wheel', onMouseWheel, false);
     window.addEventListener('resize', onWindowResize, false);
 
     //Controls
@@ -140,7 +141,13 @@ function onMouseMove(e) {
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     if (CLICKED) {
         DRAGGED = true;
+    } else {
+        DRAGGED = false;
     }
+}
+
+function onMouseWheel(e) {
+    DRAGGED = true;
 }
 
 function onMouseDown(e) {
@@ -166,6 +173,8 @@ function onTouchMove(e) {
 
 function onTouchStart(e) {
     e.preventDefault;
+    mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
     CLICKED = true;
     DRAGGED = false;
 }
