@@ -121,7 +121,6 @@ function init() {
     renderer.domElement.addEventListener('touchstart', onTouchStart, false);
     renderer.domElement.addEventListener('touchend', onTouchEnd, false);
     renderer.domElement.addEventListener('touchmove', onTouchMove, false);
-    renderer.domElement.addEventListener('wheel', onMouseWheel, false);
     window.addEventListener('resize', onWindowResize, false);
 
     //Controls
