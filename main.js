@@ -156,18 +156,21 @@ function onMouseUp(e) {
     LASTCLICKED = null;
 }
 
-function onTouchStart(e) {
-    //todo
-    e.preventDefault();
-}
 function onTouchMove(e) {
-    //todo
-    e.preventDefault();
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 }
+
+function onTouchStart(e) {
+    e.preventDefault();
+    onMouseDown(e);
+}
+
 function onTouchEnd(e) {
-    //todo
     e.preventDefault();
+    onMouseUp(e);
 }
+
 function animate() {
     requestAnimationFrame(animate);
     render();
