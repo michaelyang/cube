@@ -141,13 +141,7 @@ function onMouseMove(e) {
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     if (CLICKED) {
         DRAGGED = true;
-    } else {
-        DRAGGED = false;
     }
-}
-
-function onMouseWheel(e) {
-    DRAGGED = true;
 }
 
 function onMouseDown(e) {
@@ -172,16 +166,30 @@ function onTouchMove(e) {
 }
 
 function onTouchStart(e) {
-    e.preventDefault;
-    mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-    CLICKED = true;
-    DRAGGED = false;
+    e.preventDefault();
+    switch (e.touches.length) {
+        case 1:
+            mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+            CLICKED = true;
+            DRAGGED = false;
+            break;
+        case 2:
+            DRAGGED = true;
+            break;
+        case 3:
+            DRAGGED = true;
+            break;
+        default:
+            console.log('Not supported');
+            break;
+    }
 }
 
 function onTouchEnd(e) {
     e.preventDefault();
     if (!DRAGGED && INTERSECTED) INTERSECTED.callback();
+    if (DRAGGED) mouse = THREE.Vector2(-1000, -1000);
     CLICKED = false;
     DRAGGED = false;
 }
