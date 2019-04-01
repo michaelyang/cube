@@ -147,8 +147,8 @@ function onMouseMove(e) {
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     if (
         LASTCLICKEDLOCATION &&
-        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.05 &&
-            Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.05)
+        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.025 &&
+            Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.025)
     ) {
         DRAGGED = true;
     }
@@ -172,8 +172,8 @@ function onTouchMove(e) {
     mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
     if (
         LASTCLICKEDLOCATION &&
-        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.05 &&
-            Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.05)
+        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.025 &&
+            Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.025)
     ) {
         DRAGGED = true;
     }
