@@ -16,6 +16,57 @@ let bcrypt = dcodeIO.bcrypt;
 init();
 animate();
 
+function loadImage(imgURL) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.addEventListener('load', () => resolve(img));
+        img.addEventListener('error', reject); // don't forget this one
+        img.src = imgURL;
+    });
+}
+
+async function encryptImg(imgURL, key) {
+    const img = await loadImage(imgURL);
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
+    let dataURL;
+    canvas.height = img.naturalHeight;
+    canvas.width = img.naturalWidth;
+    ctx.drawImage(img, 0, 0);
+    dataURL = await canvas.toDataURL();
+    encrypted = CryptoJS.AES.encrypt(dataURL, key).toString();
+    img.src = imgURL;
+    return encrypted;
+}
+
+function decryptImg(encrypted, key) {
+    const img = new Image();
+    let decrypted = CryptoJS.AES.decrypt(encrypted, key).toString(
+        CryptoJS.enc.Utf8,
+    );
+    console.log(decrypted);
+    img.src = decrypted;
+    return img;
+}
+//let base64 = imgURLToBase64(cubeData[0]['materialsList'][1]['image'], function(
+//    dataUrl,
+//) {
+//   console.log(dataUrl);
+//   let encrypted = CryptoJS.AES.encrypt(dataUrl, 'hi').toString();
+//    console.log(encrypted);
+//    let decrypted = CryptoJS.AES.decrypt(encrypted, 'hi');
+//    console.log(decrypted.toString(CryptoJS.enc.Utf8));
+//});
+async function testing() {
+    let encrypted = await encryptImg(
+        cubeData[0]['materialsList'][1]['image'],
+        'key',
+    );
+    let img = decryptImg(encrypted, 'key');
+}
+
+testing();
 //let targetURL =
 //    'https://gallant-joliot-2f63cf.netlify.com/.netlify/functions/answer';
 //let headers = {
