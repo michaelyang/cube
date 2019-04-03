@@ -194,11 +194,10 @@ function init() {
 
     //Scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000);
     addCubesToScene(scene);
 
     //renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
