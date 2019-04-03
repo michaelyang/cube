@@ -1,8 +1,7 @@
 const emptyMaterialsList = [null, null, null, null, null, null];
 // front, back, up, down, left, right
-const cubeData = [
-    {
-        id: '1',
+const cubeDict = {
+    1: {
         position: [-1, 1, 1],
         materialsList: [
             null,
@@ -46,14 +45,13 @@ const cubeData = [
         ],
         answer: '$2a$10$qSyruho17.tyzGkHlgbGxu.l4BSjIGXpra2CYycT5gOKmJsi5CfZu',
     },
-    {
-        id: '2',
+    2: {
         position: [-1, 1, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '3',
+    3: {
         position: [-1, 1, -1],
         materialsList: [
             null,
@@ -95,63 +93,60 @@ const cubeData = [
                 rotation: 0,
             },
         ],
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '4',
+    4: {
         position: [0, 1, 1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '5',
+    5: {
         position: [0, 1, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '6',
+    6: {
         position: [0, 1, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '7',
+    7: {
         position: [1, 1, 1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '8',
+    8: {
         position: [1, 1, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '9',
+    9: {
         position: [1, 1, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '10',
+    10: {
         position: [-1, 0, 1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
+        answer: '$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza',
     },
-    {
-        id: '11',
+    11: {
         position: [-1, 0, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '12',
+    12: {
         position: [-1, 0, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '13',
+    13: {
         position: [0, 0, 1],
         materialsList: [
             {
@@ -210,74 +205,62 @@ const cubeData = [
             null,
         ],
     },
-    {
-        id: '14',
+    14: {
         position: [0, 0, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '15',
+    15: {
         position: [0, 0, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '16',
+    16: {
         position: [1, 0, 1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '17',
+    17: {
         position: [1, 0, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '18',
+    18: {
         position: [1, 0, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '19',
+    19: {
         position: [-1, -1, 1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '20',
+    20: {
         position: [-1, -1, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '21',
+    21: {
         position: [-1, -1, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '22',
+    22: {
         position: [0, -1, 1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '23',
+    23: {
         position: [0, -1, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '24',
+    24: {
         position: [0, -1, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '25',
+    25: {
         position: [1, -1, 1],
         materialsList: [
             {
@@ -320,19 +303,17 @@ const cubeData = [
             null,
         ],
     },
-    {
-        id: '26',
+    26: {
         position: [1, -1, 0],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-    {
-        id: '27',
+    27: {
         position: [1, -1, -1],
         materialsList: emptyMaterialsList,
         selectedMaterialsList: emptyMaterialsList,
     },
-];
+};
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF';

@@ -35,7 +35,9 @@ async function encryptImg(imgURL, key) {
     canvas.width = img.naturalWidth;
     ctx.drawImage(img, 0, 0);
     dataURL = await canvas.toDataURL();
-    encrypted = CryptoJS.AES.encrypt(dataURL, key).toString();
+    console.log(dataURL);
+    strippedDataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+    encrypted = CryptoJS.AES.encrypt(strippedDataURL, key).toString();
     img.src = imgURL;
     return encrypted;
 }
@@ -46,7 +48,7 @@ function decryptImg(encrypted, key) {
         CryptoJS.enc.Utf8,
     );
     console.log(decrypted);
-    img.src = decrypted;
+    img.src = 'data:image/png;base64,' + decrypted;
     return img;
 }
 //let base64 = imgURLToBase64(cubeData[0]['materialsList'][1]['image'], function(
@@ -60,10 +62,11 @@ function decryptImg(encrypted, key) {
 //});
 async function testing() {
     let encrypted = await encryptImg(
-        cubeData[0]['materialsList'][1]['image'],
+        cubeDict[1]['materialsList'][1]['image'],
         'key',
     );
     let img = decryptImg(encrypted, 'key');
+    console.log(img);
 }
 
 testing();
@@ -73,10 +76,10 @@ testing();
 //    'Content-Type': 'application/json',
 //};
 
-async function handleClick(cubeID) {
-    let answer = prompt(`Answer for cube ${cubeID}?`);
-    if (await bcrypt.compare(answer, cubeAnswers[cubeID])) {
-        remove(cubeID);
+async function handleClick(cubeMesh, id) {
+    let answer = prompt(`Answer for cube ${id}?`);
+    if (answer && (await bcrypt.compare(answer, cubeDict[id].answer))) {
+        removeCube(cubeMesh);
     }
     //try {
     //    let response = await fetch(targetURL, {
@@ -93,10 +96,33 @@ async function handleClick(cubeID) {
     //}
 }
 
-function materialsListToMaterials(materialsList, type) {
-    const materials = [];
+function removeCube(cubeMesh) {
+    scene.remove(cubeMesh);
+    cubesArray = cubesArray.filter(item => item != cubeMesh);
+}
+
+function getCubeMesh(id) {
+    const { position, materialsList } = cubeDict[id];
+    const [x, y, z] = position;
+    const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+    let materials = [];
+    geometry.clearGroups();
+    //Base Grey
+    geometry.addGroup(0, 36, 0);
+    materials.push(
+        new THREE.MeshBasicMaterial({
+            color: 0xc8c8c8,
+            visible: true,
+            polygonOffset: true,
+            polygonOffsetFactor: 1,
+            polygonOffsetUnits: 1,
+        }),
+    );
+    //PNG
     const loader = new THREE.TextureLoader();
-    materialsList.forEach(material => {
+    materialsList.map((material, index) => {
+        //Adds group 1 through 6
+        geometry.addGroup(index * 6, 6, index + 1);
         if (material) {
             const texture = loader.load(material.image);
             texture.center.set(0.5, 0.5);
@@ -104,64 +130,54 @@ function materialsListToMaterials(materialsList, type) {
             materials.push(
                 new THREE.MeshBasicMaterial({
                     map: texture,
-                    transparent: true,
-                    polygonOffset: true,
-                    polygonOffsetFactor: 1,
-                    polygonOffsetUnits: 1,
                 }),
             );
         } else {
-            color = type == 'unselected' ? '#c8c8c8' : '#d5d5d5';
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    color,
-                    polygonOffset: true,
-                    polygonOffsetFactor: 1,
-                    polygonOffsetUnits: 1,
+                    visible: false,
                 }),
             );
         }
     });
-    return materials;
+    //Highlight
+    geometry.addGroup(0, 36, 7);
+
+    //Highlight
+    materials.push(
+        new THREE.MeshBasicMaterial({
+            opacity: 0.3,
+            color: 0xffffff,
+            transparent: true,
+            visible: false,
+        }),
+    );
+
+    let cubeMesh = new THREE.Mesh(geometry, materials);
+
+    //Outline
+    let edges = new THREE.EdgesGeometry(geometry);
+    let outline = new THREE.LineSegments(
+        edges,
+        new THREE.LineBasicMaterial({ color: 0xffffff }),
+    );
+    cubeMesh.add(outline);
+    //Position
+    cubeMesh.position.set(x, y, z);
+    //onClick
+    cubeMesh.callback = () => handleClick(cubeMesh, id);
+    //setID
+    cubeMesh.cubeID = id;
+
+    return cubeMesh;
 }
 
 function addCubesToScene(scene) {
-    cubeData.forEach(cubeProp => {
-        const {
-            position,
-            id,
-            materialsList,
-            selectedMaterialsList,
-            answer,
-        } = cubeProp;
-        const [x, y, z] = position;
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        unselectedMaterials = materialsListToMaterials(
-            materialsList,
-            'unselected',
-        );
-        selectedMaterials = materialsListToMaterials(
-            selectedMaterialsList,
-            'selected',
-        );
-        let cube = new THREE.Mesh(geometry, unselectedMaterials);
-        cube.unselectedMaterials = unselectedMaterials;
-        cube.selectedMaterials = selectedMaterials;
-        cube.position.set(x, y, z);
-        cube.callback = () => handleClick(id);
-        cubes[id] = cube;
-        cubeAnswers[id] = answer;
-        scene.add(cube);
-        var edges = new THREE.EdgesGeometry(geometry);
-        var outline = new THREE.LineSegments(
-            edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff }),
-        );
-        outline.position.set(x, y, z);
-        outlines[id] = outline;
-        scene.add(outline);
-    });
-    cubesArray = Object.values(cubes);
+    for (let id in cubeDict) {
+        cubeMesh = getCubeMesh(id);
+        scene.add(cubeMesh);
+        cubesArray.push(cubeMesh);
+    }
 }
 
 function init() {
@@ -178,7 +194,7 @@ function init() {
 
     //Scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
+    scene.background = new THREE.Color(0x000000);
     addCubesToScene(scene);
 
     //renderer
@@ -206,12 +222,13 @@ function init() {
     renderer.render(scene, camera);
 }
 
+//Controls
 function onMouseMove(e) {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     if (
         LASTCLICKEDLOCATION &&
-        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.025 &&
+        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.025 ||
             Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.025)
     ) {
         DRAGGED = true;
@@ -236,7 +253,7 @@ function onTouchMove(e) {
     mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
     if (
         LASTCLICKEDLOCATION &&
-        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.025 &&
+        (Math.abs(mouse.x - LASTCLICKEDLOCATION.x) > 0.025 ||
             Math.abs(mouse.y - LASTCLICKEDLOCATION.y) > 0.025)
     ) {
         DRAGGED = true;
@@ -298,22 +315,13 @@ function update() {
     var intersects = ray.intersectObjects(cubesArray);
     if (!DRAGGED && intersects.length > 0) {
         if (intersects[0].object != INTERSECTED) {
-            if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
+            if (INTERSECTED) INTERSECTED.material[7].visible = false;
             INTERSECTED = intersects[0].object;
-            INTERSECTED.currentMaterial = INTERSECTED.material;
-            INTERSECTED.material = INTERSECTED.selectedMaterials;
+            INTERSECTED.material[7].visible = true;
         }
     } else {
-        if (INTERSECTED) INTERSECTED.material = INTERSECTED.currentMaterial;
+        if (INTERSECTED) INTERSECTED.material[7].visible = false;
         INTERSECTED = null;
     }
     controls.update();
-}
-
-function remove(id) {
-    mesh = cubes[id];
-    scene.remove(mesh);
-    outline = outlines[id];
-    scene.remove(outline);
-    cubesArray = Object.values(cubes);
 }
