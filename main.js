@@ -126,7 +126,9 @@ function getCubeMesh(id) {
             texture.rotation = THREE.Math.degToRad(material.rotation);
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    map: texture
+                    map: texture,
+                    transparent: true,
+                    side: THREE.DoubleSide
                 })
             );
         } else {
