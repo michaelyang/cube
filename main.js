@@ -124,6 +124,7 @@ function getCubeMesh(id) {
             const texture = loader.load(material.image);
             texture.center.set(0.5, 0.5);
             texture.rotation = THREE.Math.degToRad(material.rotation);
+            texture.flipY;
             materials.push(
                 new THREE.MeshBasicMaterial({
                     map: texture,

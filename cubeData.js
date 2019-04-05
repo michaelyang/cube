@@ -38,42 +38,22 @@ const cubeDict = {
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-b.png",
-                rotation: 180
+                rotation: 0
             },
             {
                 image:
                     "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-u.png",
-                rotation: 0
-            },
-            null,
-            null,
-            {
-                image:
-                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-r.png",
-                rotation: -180
-            }
-        ],
-        selectedMaterialsList: [
-            null,
-            {
-                image:
-                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-b_selected.png",
-                rotation: 0
-            },
-            {
-                image:
-                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-u_selected.png",
                 rotation: 90
             },
             null,
             null,
             {
                 image:
-                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-r_selected.png",
+                    "https://raw.githubusercontent.com/michaelyang/cube/master/img/3-r.png",
                 rotation: 0
             }
         ],
-        answer: "$2a$10$NF.0xt9Dzd0GjU.qbW.D/OGJ1l/XVTrPtLjit1SBbZ3tftfc52Rza"
+        answer: "$2a$10$.EY6ym2wKE5M5r185kwyx.3AagEKnFnZGy4xXlhKR7QepC9wEDsQC"
     },
     4: {
         position: [0, 1, 1],
