@@ -16,24 +16,23 @@ animate();
 function loadImage(imgURL) {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.addEventListener("load", () => resolve(img));
-        img.addEventListener("error", reject); // don't forget this one
+        img.crossOrigin = 'Anonymous';
+        img.addEventListener('load', () => resolve(img));
+        img.addEventListener('error', reject); // don't forget this one
         img.src = imgURL;
     });
 }
 
 async function encryptImg(imgURL, key) {
     const img = await loadImage(imgURL);
-    let canvas = document.createElement("canvas");
-    let ctx = canvas.getContext("2d");
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
     let dataURL;
     canvas.height = img.naturalHeight;
     canvas.width = img.naturalWidth;
     ctx.drawImage(img, 0, 0);
     dataURL = await canvas.toDataURL();
-    console.log(dataURL);
-    strippedDataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    strippedDataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
     encrypted = CryptoJS.AES.encrypt(strippedDataURL, key).toString();
     img.src = imgURL;
     return encrypted;
@@ -42,10 +41,10 @@ async function encryptImg(imgURL, key) {
 function decryptImg(encrypted, key) {
     const img = new Image();
     let decrypted = CryptoJS.AES.decrypt(encrypted, key).toString(
-        CryptoJS.enc.Utf8
+        CryptoJS.enc.Utf8,
     );
     console.log(decrypted);
-    img.src = "data:image/png;base64," + decrypted;
+    img.src = 'data:image/png;base64,' + decrypted;
     return img;
 }
 //let base64 = imgURLToBase64(cubeData[0]['materialsList'][1]['image'], function(
@@ -57,16 +56,16 @@ function decryptImg(encrypted, key) {
 //    let decrypted = CryptoJS.AES.decrypt(encrypted, 'hi');
 //    console.log(decrypted.toString(CryptoJS.enc.Utf8));
 //});
-async function testing() {
-    let encrypted = await encryptImg(
-        cubeDict[1]["materialsList"][1]["image"],
-        "key"
-    );
-    let img = decryptImg(encrypted, "key");
-    console.log(img);
-}
+//async function testing() {
+//    let encrypted = await encryptImg(
+//        cubeDict[1]['materialsList'][1]['image'],
+//        'key',
+//    );
+//    let img = decryptImg(encrypted, 'key');
+//    console.log(img);
+//}
 
-testing();
+//testing();
 //let targetURL =
 //    'https://gallant-joliot-2f63cf.netlify.com/.netlify/functions/answer';
 //let headers = {
@@ -75,7 +74,7 @@ testing();
 
 async function handleClick(cubeMesh, id) {
     let answer = prompt(`Answer for cube ${id}?`);
-    if (answer && (await bcrypt.compare(answer, cubeDict[id].answer))) {
+    if (answer && (await bcrypt.compare(answer, cubeData[id].answer))) {
         removeCube(cubeMesh);
     }
     //try {
@@ -99,7 +98,7 @@ function removeCube(cubeMesh) {
 }
 
 function getCubeMesh(id) {
-    const { position, materialsList } = cubeDict[id];
+    const { position, materialsList } = cubeData[id];
     const [x, y, z] = position;
     const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
     let materials = [];
@@ -112,8 +111,8 @@ function getCubeMesh(id) {
             visible: true,
             polygonOffset: true,
             polygonOffsetFactor: 1,
-            polygonOffsetUnits: 1
-        })
+            polygonOffsetUnits: 1,
+        }),
     );
     //PNG
     const loader = new THREE.TextureLoader();
@@ -121,7 +120,13 @@ function getCubeMesh(id) {
         //Adds group 1 through 6
         geometry.addGroup(index * 6, 6, index + 1);
         if (material) {
-            const texture = loader.load(material.image);
+            let image = new Image();
+            image.src = 'data:image/png;base64,' + material.image;
+            let texture = new THREE.Texture();
+            texture.image = image;
+            image.onload = function() {
+                texture.needsUpdate = true;
+            };
             texture.center.set(0.5, 0.5);
             texture.rotation = THREE.Math.degToRad(material.rotation);
             texture.flipY;
@@ -129,14 +134,14 @@ function getCubeMesh(id) {
                 new THREE.MeshBasicMaterial({
                     map: texture,
                     transparent: true,
-                    side: THREE.DoubleSide
-                })
+                    side: THREE.DoubleSide,
+                }),
             );
         } else {
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    visible: false
-                })
+                    visible: false,
+                }),
             );
         }
     });
@@ -149,8 +154,8 @@ function getCubeMesh(id) {
             opacity: 0.3,
             color: 0xffffff,
             transparent: true,
-            visible: false
-        })
+            visible: false,
+        }),
     );
 
     let cubeMesh = new THREE.Mesh(geometry, materials);
@@ -159,7 +164,7 @@ function getCubeMesh(id) {
     let edges = new THREE.EdgesGeometry(geometry);
     let outline = new THREE.LineSegments(
         edges,
-        new THREE.LineBasicMaterial({ color: 0xffffff })
+        new THREE.LineBasicMaterial({ color: 0xffffff }),
     );
     cubeMesh.add(outline);
     //Position
@@ -173,7 +178,7 @@ function getCubeMesh(id) {
 }
 
 function addCubesToScene(scene) {
-    for (let id in cubeDict) {
+    for (let id in cubeData) {
         cubeMesh = getCubeMesh(id);
         scene.add(cubeMesh);
         cubesArray.push(cubeMesh);
@@ -186,7 +191,7 @@ function init() {
         30,
         window.innerWidth / window.innerHeight,
         0.1,
-        100
+        100,
     );
     camera.position.x = 20;
     camera.position.y = 20;
@@ -201,13 +206,13 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
-    renderer.domElement.addEventListener("mousedown", onMouseDown, false);
-    renderer.domElement.addEventListener("mouseup", onMouseUp, false);
-    renderer.domElement.addEventListener("touchstart", onTouchStart, false);
-    renderer.domElement.addEventListener("touchend", onTouchEnd, false);
-    renderer.domElement.addEventListener("touchmove", onTouchMove, false);
-    window.addEventListener("resize", onWindowResize, false);
+    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+    renderer.domElement.addEventListener('touchstart', onTouchStart, false);
+    renderer.domElement.addEventListener('touchend', onTouchEnd, false);
+    renderer.domElement.addEventListener('touchmove', onTouchMove, false);
+    window.addEventListener('resize', onWindowResize, false);
 
     //Controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -275,7 +280,7 @@ function onTouchStart(e) {
             DRAGGED = true;
             break;
         default:
-            console.log("Not supported");
+            console.log('Not supported');
             break;
     }
 }
@@ -309,7 +314,7 @@ function update() {
     vector.unproject(camera);
     var ray = new THREE.Raycaster(
         camera.position,
-        vector.sub(camera.position).normalize()
+        vector.sub(camera.position).normalize(),
     );
     var intersects = ray.intersectObjects(cubesArray);
     if (!DRAGGED && intersects.length > 0) {

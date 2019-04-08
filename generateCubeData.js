@@ -3,8 +3,6 @@ let AES = require('crypto-js/aes');
 let fs = require('fs');
 let answers = JSON.parse(fs.readFileSync('./answers.json'));
 
-let encrypted = AES.encrypt('ho', 'bacon').toString();
-console.log(encrypted);
 const emptyMaterialsList = [null, null, null, null, null, null];
 const encryptedBy = {
     '2-left': 1,
@@ -316,9 +314,37 @@ for (let key in cubeDict) {
 }
 
 //Encrypt image if necessary
+const directionMap = {
+    front: 0,
+    back: 1,
+    up: 2,
+    down: 3,
+    left: 4,
+    right: 5,
+};
 for (const [key, value] of Object.entries(encryptedBy)) {
-    //console.log(key, value);
+    const [a, b] = key.split('-');
+    // 0 - front, 1 - back, 2 - up, 3 - down, 4 - left, 5 - right
+    let base64Image = cubeDict[parseInt(a)]['materialsList'][directionMap[b]];
+    let encrypted = null;
+    if (base64Image) {
+        encrypted = AES.encrypt(
+            base64Image.image,
+            answers[value.toString()],
+        ).toString();
+        cubeDict[parseInt(a)]['materialsList'][directionMap[b]] = {
+            image: encrypted,
+            rotation: base64Image.rotation,
+        };
+    }
 }
-console.log(cubeDict);
-//let jsonFile = JSON.stringify(cubeDict);
-//console.log(jsonFile);
+let jsonFile = JSON.stringify(cubeDict);
+var jsonContent = JSON.stringify(cubeDict);
+fs.writeFile('cubeData.js', 'const cubeData = ' + jsonContent, 'utf8', function(
+    err,
+) {
+    if (err) {
+        console.log('An error occured while writing JSON Object to File.');
+        return console.log(err);
+    }
+});
