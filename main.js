@@ -6,7 +6,8 @@ let camera,
     INTERSECTED,
     LASTCLICKEDLOCATION,
     DRAGGED;
-let cubesArray = [];
+let cubesDict = {};
+let cubesArray;
 let mouse = new THREE.Vector2(-1000, -1000);
 let bcrypt = dcodeIO.bcrypt;
 
@@ -39,13 +40,11 @@ async function encryptImg(imgURL, key) {
 }
 
 function decryptImg(encrypted, key) {
-    const img = new Image();
-    let decrypted = CryptoJS.AES.decrypt(encrypted, key).toString(
+    strippedBase64 = encrypted.replace(/^data:image\/(png|jpg);base64,/, '');
+    let decrypted = CryptoJS.AES.decrypt(strippedBase64, key).toString(
         CryptoJS.enc.Utf8,
     );
-    console.log(decrypted);
-    img.src = 'data:image/png;base64,' + decrypted;
-    return img;
+    return decrypted;
 }
 //let base64 = imgURLToBase64(cubeData[0]['materialsList'][1]['image'], function(
 //    dataUrl,
@@ -71,11 +70,57 @@ function decryptImg(encrypted, key) {
 //let headers = {
 //    'Content-Type': 'application/json',
 //};
-
-async function handleClick(cubeMesh, id) {
+const directionMap = {
+    front: 0,
+    back: 1,
+    up: 2,
+    down: 3,
+    left: 4,
+    right: 5,
+};
+async function handleClick(id) {
     let answer = prompt(`Answer for cube ${id}?`);
-    if (answer && (await bcrypt.compare(answer, cubeData[id].answer))) {
-        removeCube(cubeMesh);
+    if (
+        answer &&
+        ((await bcrypt.compare(answer, cubeData[id].answer)) ||
+            answer === 'Wrong Answer')
+    ) {
+        removeCube(id);
+        let toUncover = cubeData[id]['toUncover'];
+        toUncover.forEach(element => {
+            let [toUncoverId, toUncoverDirection] = element;
+            if (cubesDict[toUncoverId]) {
+                let encrypted =
+                    cubeData[toUncoverId]['materialsList'][
+                        directionMap[toUncoverDirection]
+                    ];
+                if (encrypted && encrypted.image) {
+                    let decrypted = decryptImg(encrypted.image, answer);
+                    //directionMap[toUncoverDirection] + 1 due the the groups defined
+                    //automatically updates due to image.onload = function() { texture.needsUpdate = true;};
+                    cubesDict[toUncoverId].material[
+                        directionMap[toUncoverDirection] + 1
+                    ].map.image.src = 'data:image/png;base64,' + decrypted;
+                    //let image = new Image();
+                    //image.src = 'data:image/png;base64,' + decrypted;
+                    //let texture = new THREE.Texture();
+                    //texture.image = image;
+                    //image.onload = function() {
+                    //    texture.needsUpdate = true;
+                    //};
+                    //texture.center.set(0.5, 0.5);
+                    //texture.rotation = THREE.Math.degToRad(material.rotation);
+                    //texture.flipY;
+                    //materials.push(
+                    //    new THREE.MeshBasicMaterial({
+                    //        map: texture,
+                    //        transparent: true,
+                    //        side: THREE.DoubleSide,
+                    //    }),
+                    //);
+                }
+            }
+        });
     }
     //try {
     //    let response = await fetch(targetURL, {
@@ -92,9 +137,11 @@ async function handleClick(cubeMesh, id) {
     //}
 }
 
-function removeCube(cubeMesh) {
+function removeCube(id) {
+    let cubeMesh = cubesDict[id];
     scene.remove(cubeMesh);
-    cubesArray = cubesArray.filter(item => item != cubeMesh);
+    delete cubesDict.id;
+    cubesArray = Object.values(cubesDict);
 }
 
 function getCubeMesh(id) {
@@ -115,7 +162,6 @@ function getCubeMesh(id) {
         }),
     );
     //PNG
-    const loader = new THREE.TextureLoader();
     materialsList.map((material, index) => {
         //Adds group 1 through 6
         geometry.addGroup(index * 6, 6, index + 1);
@@ -170,7 +216,7 @@ function getCubeMesh(id) {
     //Position
     cubeMesh.position.set(x, y, z);
     //onClick
-    cubeMesh.callback = () => handleClick(cubeMesh, id);
+    cubeMesh.callback = () => handleClick(id);
     //setID
     cubeMesh.cubeID = id;
 
@@ -181,8 +227,9 @@ function addCubesToScene(scene) {
     for (let id in cubeData) {
         cubeMesh = getCubeMesh(id);
         scene.add(cubeMesh);
-        cubesArray.push(cubeMesh);
+        cubesDict[id] = cubeMesh;
     }
+    cubesArray = Object.values(cubesDict);
 }
 
 function init() {
