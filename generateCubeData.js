@@ -145,7 +145,20 @@ const cubeDict = {
     },
     6: {
         position: [0, 1, -1],
-        materialsList: emptyMaterialsList,
+        materialsList: [
+            null,
+            null,
+            {
+                image: "./img/6-u.png",
+                rotation: 90
+            },
+            null,
+            null,
+            {
+                image: "./img/6-r.png",
+                rotation: 0
+            }
+        ],
         answer: "",
         toUncover: [[5, "right"], [15, "up"]]
     },
