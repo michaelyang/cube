@@ -82,11 +82,30 @@ const cubeDict = {
             null
         ],
         answer: "",
-        toUncover: [[2, "front"], [4, "back"], [10, "up"]]
+        toUncover: [[2, "left"], [4, "back"], [10, "up"]]
     },
     2: {
         position: [-1, 1, 0],
-        materialsList: emptyMaterialsList,
+        materialsList: [
+            null,
+            {
+                image: "./img/2-b.png",
+                rotation: 0
+            },
+            {
+                image: "./img/2-u.png",
+                rotation: 90
+            },
+            null,
+            {
+                image: "./img/2-l.png",
+                rotation: 0
+            },
+            {
+                image: "./img/2-r.png",
+                rotation: 0
+            }
+        ],
         answer: "",
         toUncover: [[5, "back"], [11, "up"]]
     },
@@ -245,7 +264,23 @@ const cubeDict = {
     },
     19: {
         position: [-1, -1, 1],
-        materialsList: emptyMaterialsList,
+        materialsList: [
+            null,
+            {
+                image: "./img/19-b.png",
+                rotation: 0
+            },
+            null,
+            {
+                image: "./img/19-d.png",
+                rotation: -90
+            },
+            {
+                image: "./img/19-l.png",
+                rotation: 0
+            },
+            null
+        ],
         answer: "",
         toUncover: [[10, "down"], [20, "left"], [22, "back"]]
     },
@@ -318,7 +353,7 @@ const cubeDict = {
             null,
             {
                 image: "./img/27-d.png",
-                rotation: 0
+                rotation: -90
             },
             null,
             {
