@@ -158,7 +158,7 @@ function getCubeMesh(id) {
         if (id === "6" && index === 2) {
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    color: 0x423350,
+                    color: 0x423550,
                     visible: true,
                     polygonOffset: true,
                     polygonOffsetFactor: 1,
