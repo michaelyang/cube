@@ -10,6 +10,7 @@ let cubesDict = {};
 let cubesArray;
 let mouse = new THREE.Vector2(-1000, -1000);
 let bcrypt = dcodeIO.bcrypt;
+let highlightMaterialIndex = 12;
 
 init();
 animate();
@@ -17,32 +18,32 @@ animate();
 function loadImage(imgURL) {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.addEventListener('load', () => resolve(img));
-        img.addEventListener('error', reject); // don't forget this one
+        img.crossOrigin = "Anonymous";
+        img.addEventListener("load", () => resolve(img));
+        img.addEventListener("error", reject); // don't forget this one
         img.src = imgURL;
     });
 }
 
 async function encryptImg(imgURL, key) {
     const img = await loadImage(imgURL);
-    let canvas = document.createElement('canvas');
-    let ctx = canvas.getContext('2d');
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
     let dataURL;
     canvas.height = img.naturalHeight;
     canvas.width = img.naturalWidth;
     ctx.drawImage(img, 0, 0);
     dataURL = await canvas.toDataURL();
-    strippedDataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+    strippedDataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     encrypted = CryptoJS.AES.encrypt(strippedDataURL, key).toString();
     img.src = imgURL;
     return encrypted;
 }
 
 function decryptImg(encrypted, key) {
-    strippedBase64 = encrypted.replace(/^data:image\/(png|jpg);base64,/, '');
+    strippedBase64 = encrypted.replace(/^data:image\/(png|jpg);base64,/, "");
     let decrypted = CryptoJS.AES.decrypt(strippedBase64, key).toString(
-        CryptoJS.enc.Utf8,
+        CryptoJS.enc.Utf8
     );
     return decrypted;
 }
@@ -76,22 +77,22 @@ const directionMap = {
     up: 2,
     down: 3,
     left: 4,
-    right: 5,
+    right: 5
 };
 async function handleClick(id) {
     let answer = prompt(`Answer for cube ${id}?`);
     if (
         answer &&
         ((await bcrypt.compare(answer, cubeData[id].answer)) ||
-            answer === 'Wrong Answer')
+            answer === "Wrong Answer")
     ) {
         removeCube(id);
-        let toUncover = cubeData[id]['toUncover'];
+        let toUncover = cubeData[id]["toUncover"];
         toUncover.forEach(element => {
             let [toUncoverId, toUncoverDirection] = element;
             if (cubesDict[toUncoverId]) {
                 let encrypted =
-                    cubeData[toUncoverId]['materialsList'][
+                    cubeData[toUncoverId]["materialsList"][
                         directionMap[toUncoverDirection]
                     ];
                 if (encrypted && encrypted.image) {
@@ -100,7 +101,7 @@ async function handleClick(id) {
                     //automatically updates due to image.onload = function() { texture.needsUpdate = true;};
                     cubesDict[toUncoverId].material[
                         directionMap[toUncoverDirection] + 1
-                    ].map.image.src = 'data:image/png;base64,' + decrypted;
+                    ].map.image.src = "data:image/png;base64," + decrypted;
                     //let image = new Image();
                     //image.src = 'data:image/png;base64,' + decrypted;
                     //let texture = new THREE.Texture();
@@ -151,23 +152,48 @@ function getCubeMesh(id) {
     let materials = [];
     geometry.clearGroups();
     //Base Grey
-    geometry.addGroup(0, 36, 0);
-    materials.push(
-        new THREE.MeshBasicMaterial({
-            color: 0xc8c8c8,
-            visible: true,
-            polygonOffset: true,
-            polygonOffsetFactor: 1,
-            polygonOffsetUnits: 1,
-        }),
-    );
+    let index;
+    for (index = 0; index < 6; index++) {
+        geometry.addGroup(index * 6, 6, index);
+        if (id === "6" && index === 2) {
+            materials.push(
+                new THREE.MeshBasicMaterial({
+                    color: 0x423350,
+                    visible: true,
+                    polygonOffset: true,
+                    polygonOffsetFactor: 1,
+                    polygonOffsetUnits: 1
+                })
+            );
+        } else if (id === "6" && index === 5) {
+            materials.push(
+                new THREE.MeshBasicMaterial({
+                    color: 0x710655,
+                    visible: true,
+                    polygonOffset: true,
+                    polygonOffsetFactor: 1,
+                    polygonOffsetUnits: 1
+                })
+            );
+        } else {
+            materials.push(
+                new THREE.MeshBasicMaterial({
+                    color: 0xc8c8c8,
+                    visible: true,
+                    polygonOffset: true,
+                    polygonOffsetFactor: 1,
+                    polygonOffsetUnits: 1
+                })
+            );
+        }
+    }
     //PNG
     materialsList.map((material, index) => {
         //Adds group 1 through 6
-        geometry.addGroup(index * 6, 6, index + 1);
+        geometry.addGroup(index * 6, 6, index + 6);
         if (material) {
             let image = new Image();
-            image.src = 'data:image/png;base64,' + material.image;
+            image.src = "data:image/png;base64," + material.image;
             let texture = new THREE.Texture();
             texture.image = image;
             image.onload = function() {
@@ -180,19 +206,19 @@ function getCubeMesh(id) {
                 new THREE.MeshBasicMaterial({
                     map: texture,
                     transparent: true,
-                    side: THREE.DoubleSide,
-                }),
+                    side: THREE.DoubleSide
+                })
             );
         } else {
             materials.push(
                 new THREE.MeshBasicMaterial({
-                    visible: false,
-                }),
+                    visible: false
+                })
             );
         }
     });
     //Highlight
-    geometry.addGroup(0, 36, 7);
+    geometry.addGroup(0, 36, highlightMaterialIndex);
 
     //Highlight
     materials.push(
@@ -200,8 +226,8 @@ function getCubeMesh(id) {
             opacity: 0.3,
             color: 0xffffff,
             transparent: true,
-            visible: false,
-        }),
+            visible: false
+        })
     );
 
     let cubeMesh = new THREE.Mesh(geometry, materials);
@@ -210,7 +236,7 @@ function getCubeMesh(id) {
     let edges = new THREE.EdgesGeometry(geometry);
     let outline = new THREE.LineSegments(
         edges,
-        new THREE.LineBasicMaterial({ color: 0xffffff }),
+        new THREE.LineBasicMaterial({ color: 0xffffff })
     );
     cubeMesh.add(outline);
     //Position
@@ -238,7 +264,7 @@ function init() {
         30,
         window.innerWidth / window.innerHeight,
         0.1,
-        100,
+        100
     );
     camera.position.x = 20;
     camera.position.y = 20;
@@ -253,13 +279,13 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    renderer.domElement.addEventListener('mousemove', onMouseMove, false);
-    renderer.domElement.addEventListener('mousedown', onMouseDown, false);
-    renderer.domElement.addEventListener('mouseup', onMouseUp, false);
-    renderer.domElement.addEventListener('touchstart', onTouchStart, false);
-    renderer.domElement.addEventListener('touchend', onTouchEnd, false);
-    renderer.domElement.addEventListener('touchmove', onTouchMove, false);
-    window.addEventListener('resize', onWindowResize, false);
+    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
+    renderer.domElement.addEventListener("mousedown", onMouseDown, false);
+    renderer.domElement.addEventListener("mouseup", onMouseUp, false);
+    renderer.domElement.addEventListener("touchstart", onTouchStart, false);
+    renderer.domElement.addEventListener("touchend", onTouchEnd, false);
+    renderer.domElement.addEventListener("touchmove", onTouchMove, false);
+    window.addEventListener("resize", onWindowResize, false);
 
     //Controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -327,7 +353,7 @@ function onTouchStart(e) {
             DRAGGED = true;
             break;
         default:
-            console.log('Not supported');
+            console.log("Not supported");
             break;
     }
 }
@@ -361,17 +387,19 @@ function update() {
     vector.unproject(camera);
     var ray = new THREE.Raycaster(
         camera.position,
-        vector.sub(camera.position).normalize(),
+        vector.sub(camera.position).normalize()
     );
     var intersects = ray.intersectObjects(cubesArray);
     if (!DRAGGED && intersects.length > 0) {
         if (intersects[0].object != INTERSECTED) {
-            if (INTERSECTED) INTERSECTED.material[7].visible = false;
+            if (INTERSECTED)
+                INTERSECTED.material[highlightMaterialIndex].visible = false;
             INTERSECTED = intersects[0].object;
-            INTERSECTED.material[7].visible = true;
+            INTERSECTED.material[highlightMaterialIndex].visible = true;
         }
     } else {
-        if (INTERSECTED) INTERSECTED.material[7].visible = false;
+        if (INTERSECTED)
+            INTERSECTED.material[highlightMaterialIndex].visible = false;
         INTERSECTED = null;
     }
     controls.update();
