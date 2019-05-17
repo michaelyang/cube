@@ -100,7 +100,7 @@ async function handleClick(id) {
                     //directionMap[toUncoverDirection] + 1 due the the groups defined
                     //automatically updates due to image.onload = function() { texture.needsUpdate = true;};
                     cubesDict[toUncoverId].material[
-                        directionMap[toUncoverDirection] + 1
+                        directionMap[toUncoverDirection] + 6
                     ].map.image.src = "data:image/png;base64," + decrypted;
                     //let image = new Image();
                     //image.src = 'data:image/png;base64,' + decrypted;

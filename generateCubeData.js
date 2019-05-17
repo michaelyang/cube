@@ -146,8 +146,14 @@ const cubeDict = {
     6: {
         position: [0, 1, -1],
         materialsList: [
-            null,
-            null,
+            {
+                image: "./img/6-f.png",
+                rotation: 0
+            },
+            {
+                image: "./img/6-b.png",
+                rotation: 0
+            },
             {
                 image: "./img/6-u.png",
                 rotation: 90
